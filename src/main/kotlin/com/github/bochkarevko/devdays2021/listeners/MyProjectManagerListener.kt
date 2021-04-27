@@ -10,4 +10,9 @@ internal class MyProjectManagerListener : ProjectManagerListener {
     override fun projectOpened(project: Project) {
         project.service<MyProjectService>()
     }
+
+    override fun projectClosed(project: Project) {
+        super.projectClosed(project)
+        // save xml
+    }
 }
