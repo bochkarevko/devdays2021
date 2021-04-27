@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.bochkarevko.devdays2021.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.bochkarevko.devdays2021.MyBundle
 
 class MyApplicationService {
 
