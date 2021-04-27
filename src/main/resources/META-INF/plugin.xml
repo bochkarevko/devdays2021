@@ -25,6 +25,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <typedHandler implementation="com.github.bochkarevko.devdays2021.MyTypedHandler"/>
+        <typedHandler implementation="com.github.bochkarevko.devdays2021.handlers.MyTypedHandler"/>
+        <backspaceHandlerDelegate implementation="com.github.bochkarevko.devdays2021.handlers.MyBackSpaceHandler"/>
     </extensions>
 </idea-plugin>

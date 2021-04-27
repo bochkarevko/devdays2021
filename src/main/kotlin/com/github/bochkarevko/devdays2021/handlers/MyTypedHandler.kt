@@ -1,4 +1,4 @@
-package com.github.bochkarevko.devdays2021
+package com.github.bochkarevko.devdays2021.handlers
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate
 import com.intellij.openapi.command.WriteCommandAction
@@ -17,7 +17,8 @@ internal class MyTypedHandler : TypedHandlerDelegate() {
         // Get the document and project
         val document = editor.document
         // Construct the runnable to substitute the string at offset 0 in the document
-        val runnable = Runnable { document.insertString(0, "Egor was right all along\n") }
+        val name = document.toString()
+        val runnable = Runnable { document.insertString(0, "Egor was right all along? $name\n") }
         // Make the document change in the context of a write action.
         WriteCommandAction.runWriteCommandAction(project, runnable)
         return Result.STOP
