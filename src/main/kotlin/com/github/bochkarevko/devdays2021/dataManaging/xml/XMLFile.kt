@@ -20,12 +20,7 @@ class XMLFile(
     ) var duration: Duration = Duration.ZERO,
 ) {
     val path: Path
-        get() {
-            if (parent !is XMLDirectory) {
-                return File(File("."), name!!).toPath()
-            }
-            return File((parent as XMLDirectory).path.toFile(), name!!).toPath()
-        }
+        get() = File(parent!!.path!!.toFile(), name!!).toPath()
 
     override fun toString(): String {
         return "file($name',$owner',$duration)"

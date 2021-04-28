@@ -9,6 +9,8 @@ open class XMLRootDirectory(
     @XmlElement val dir: MutableList<XMLDirectory> = mutableListOf(),
     @XmlElement val file: MutableList<XMLFile> = mutableListOf(),
 ) {
+    @XmlTransient open var path: Path? = null
+
     override fun toString(): String {
         return "root(dirs=$dir, files=$file)"
     }
