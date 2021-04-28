@@ -5,12 +5,17 @@ import com.github.bochkarevko.devdays2021.utils.actionType
 import com.intellij.openapi.editor.event.VisibleAreaEvent
 import com.intellij.openapi.editor.event.VisibleAreaListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import java.awt.Rectangle
 
 class CtoVisibleAreaListener : VisibleAreaListener {
+    private fun scrolled(old: Rectangle, new: Rectangle) = (old.location != new.location)
+
     override fun visibleAreaChanged(e: VisibleAreaEvent) {
-        val a = FileDocumentManager.getInstance().getFile(e.editor.document)
-        if (a != null) {
-            MainClass.sendAction(a.toNioPath(), actionType.VISIBLE_AREA)
+        if (scrolled(e.oldRectangle, e.newRectangle)) {
+            val a = FileDocumentManager.getInstance().getFile(e.editor.document)
+            if (a != null) {
+                MainClass.sendAction(a.toNioPath(), actionType.VISIBLE_AREA)
+            }
         }
     }
 }

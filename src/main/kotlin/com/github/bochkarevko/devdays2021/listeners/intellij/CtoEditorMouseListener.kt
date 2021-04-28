@@ -11,7 +11,7 @@ class CtoEditorMouseListener : EditorMouseListener {
 
     override fun mouseEntered(event: EditorMouseEvent) {
         super.mouseEntered(event)
-        println("mouseEntered ${event.editor.document}")
+        // println("mouseEntered ${event.editor.document}")
     }
 
     override fun mousePressed(event: EditorMouseEvent) {
