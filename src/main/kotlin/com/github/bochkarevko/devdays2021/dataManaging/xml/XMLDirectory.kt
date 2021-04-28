@@ -1,10 +1,26 @@
 package com.github.bochkarevko.devdays2021.dataManaging.xml
 
-import kotlinx.serialization.Serializable
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import java.io.File
+import java.nio.file.Path
+import javax.xml.bind.annotation.*
 
-@XmlRootElement
-@Serializable
-class XMLDirectory(@XmlElement val dirs: List<XMLDirectory>, @XmlAttribute var name: String)
+@XmlRootElement(name = "dir")
+@XmlAccessorType(XmlAccessType.FIELD)
+class XMLDirectory(
+    @XmlAttribute val name: String? = null,
+    @XmlTransient internal var parent: XMLDirectory? = null,
+    dirs: MutableList<XMLDirectory> = mutableListOf(),
+    files: MutableList<XMLFile> = mutableListOf(),
+) : XMLRootDirectory(dirs, files) {
+    val path: Path
+        get() {
+            if (parent == null || parent !is XMLDirectory) {
+                return File(File("."), name!!).toPath()
+            }
+            return File(parent!!.path.toFile(), name!!).toPath()
+        }
+
+    override fun toString(): String {
+        return "dir($name, dirs=$dir, files=$file)"
+    }
+}

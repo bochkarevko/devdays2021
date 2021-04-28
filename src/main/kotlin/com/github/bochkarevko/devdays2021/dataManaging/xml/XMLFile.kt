@@ -1,11 +1,33 @@
 package com.github.bochkarevko.devdays2021.dataManaging.xml
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
+import com.github.bochkarevko.devdays2021.dataManaging.FileInfo
+import java.io.File
+import java.nio.file.Path
 import java.time.Duration
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
+import javax.xml.bind.annotation.*
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
-@XmlRootElement
-@Serializable
-class XMLFile(@XmlAttribute var name: String, @XmlAttribute var owner: String, @XmlAttribute @Contextual var duration: Duration)
+@XmlRootElement(name="file")
+@XmlAccessorType(XmlAccessType.FIELD)
+// TODO: there should be different XMLFiles for public and private xml files
+class XMLFile(
+    @XmlAttribute val name: String? = null,
+    @XmlTransient internal var parent: XMLRootDirectory? = null,
+    @XmlAttribute var owner: String? = null,
+    @XmlAttribute @field:XmlJavaTypeAdapter(
+        type = Duration::class,
+        value = DurationAdapter::class
+    ) var duration: Duration = Duration.ZERO,
+) {
+    val path: Path
+        get() {
+            if (parent !is XMLDirectory) {
+                return File(File("."), name!!).toPath()
+            }
+            return File((parent as XMLDirectory).path.toFile(), name!!).toPath()
+        }
+
+    override fun toString(): String {
+        return "file($name',$owner',$duration)"
+    }
+}
