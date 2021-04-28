@@ -13,11 +13,11 @@ import javax.xml.bind.Marshaller
 class XMLDataManager(
     private var publicDocumentPath: Path,
     private var privateDocumentPath: Path,
-    override val defaultOwner: String
+    override val defaultOwner: String,
+    internal val projectPath: Path// = File(".").toPath().normalize().toAbsolutePath(),
 ) : DataManager {
     private val publicRootDirectory: XMLRootDirectory
     internal val privateRootDirectory: XMLRootDirectory
-    internal val projectPath = File(".").toPath().normalize().toAbsolutePath()
     private val jaxbContext = JAXBContext.newInstance(XMLRootDirectory::class.java)
     private val marshaller = jaxbContext.createMarshaller()
     private val fileInfoMap = mutableMapOf<Path, FileInfo>() // if have PrivateFileInfo then PrivateFileInfo else PublicFileInfo
