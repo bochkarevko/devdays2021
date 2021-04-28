@@ -55,9 +55,9 @@ class XMLDataManager(
         if (Files.exists(path) && !path.isFile()) {
             throw IllegalArgumentException("Is not a file")
         }
-        if (!path.toAbsolutePath().startsWith(projectPath)) {
-            throw IllegalArgumentException("File is not in our project directory")
-        }
+//        if (!path.toAbsolutePath().startsWith(projectPath)) {
+//            throw IllegalArgumentException("File is not in our project directory")
+//        }
         return if (!fileInfoMap.containsKey(path)) {
             createFileInfo(path)
         } else {
