@@ -1,9 +1,9 @@
-package com.github.bochkarevko.devdays2021.listeners
+package com.github.bochkarevko.devdays2021.listeners.intellij
 
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
 
-class MyEditorMouseListener : EditorMouseListener {
+class CtoEditorMouseListener : EditorMouseListener {
     override fun mouseClicked(event: EditorMouseEvent) {
         super.mouseClicked(event)
         println("mouseClicked ${event.editor.document}")

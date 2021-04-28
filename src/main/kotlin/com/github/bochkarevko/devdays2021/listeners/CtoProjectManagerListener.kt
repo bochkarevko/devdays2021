@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
 import com.intellij.openapi.editor.Editor
 
-internal class MyProjectManagerListener : ProjectManagerListener {
+internal class CtoProjectManagerListener : ProjectManagerListener {
     override fun projectOpened(project: Project) {
         //project.service<MyProjectService>()
         println("project opened??")

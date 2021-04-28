@@ -13,23 +13,11 @@
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.bochkarevko.devdays2021.listeners.MyProjectManagerListener"
+        <listener class="com.github.bochkarevko.devdays2021.listeners.CtoProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
-        <listener class="com.github.bochkarevko.devdays2021.listeners.MyScrolledListener"
-                  topic="com.intellij.openapi.editor.event.VisibleAreaListener"/>
     </applicationListeners>
 
-    <actions>
-        <group id="MyPlugin.GreetingMenu" text="Greeting" description="Greeting menu">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="MyPlugin.Hello" class="com.github.bochkarevko.devdays2021.actions.HelloAction" text="Hello" description="Says hello"/>
-        </group>
-    </actions>
-
     <extensions defaultExtensionNs="com.intellij">
-        <!--        <typedHandler implementation="com.github.bochkarevko.devdays2021.handlers.MyTypedHandler"/>-->
-        <!--        <backspaceHandlerDelegate implementation="com.github.bochkarevko.devdays2021.handlers.MyBackSpaceHandler"/>-->
-        <!--        <moveLeftRightHandler implementationClass="com.github.bochkarevko.devdays2021.handlers.MyMoveElementLeftRightHandler"/>-->
-        <editorFactoryListener implementation="com.github.bochkarevko.devdays2021.listeners.MyEditorFactoryListener"/>
+        <editorFactoryListener implementation="com.github.bochkarevko.devdays2021.listeners.CtoEditorFactoryListener"/>
     </extensions>
 </idea-plugin>
