@@ -11,5 +11,7 @@ class MyEditorFactoryListener : EditorFactoryListener {
         editor.scrollingModel.addVisibleAreaListener(MyVisibleAreaListener())
         editor.document.addDocumentListener(MyDocumentListener())
         editor.selectionModel.addSelectionListener(MySelectionListener())
+        editor.addEditorMouseMotionListener(MyEditorMouseMotionListener())
+        editor.addEditorMouseListener(MyEditorMouseListener())
     }
 }
