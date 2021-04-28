@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+    <dir name="foo">
+        <file name="bar.txt" owner="petya229" duration="PT0S"/>
+        <file name="bar2.txt" owner="petya229" duration="PT0S"/>
+        <file name="bar3.txt" owner="petya229" duration="PT0S"/>
+    </dir>
+    <dir name="foo2">
+        <file name="bar.txt" owner="petya229" duration="PT0S"/>
+    </dir>
+    <dir name="foo3">
+        <file name="bar.txt" owner="petya229" duration="PT0S"/>
+    </dir>
+</root>
