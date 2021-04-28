@@ -8,17 +8,13 @@ import javax.xml.bind.annotation.*
 @XmlAccessorType(XmlAccessType.FIELD)
 class XMLDirectory(
     @XmlAttribute val name: String? = null,
-    @XmlTransient internal var parent: XMLDirectory? = null,
+    @XmlTransient internal var parent: XMLRootDirectory? = null,
     dirs: MutableList<XMLDirectory> = mutableListOf(),
     files: MutableList<XMLFile> = mutableListOf(),
 ) : XMLRootDirectory(dirs, files) {
-    val path: Path
-        get() {
-            if (parent == null || parent !is XMLDirectory) {
-                return File(File("."), name!!).toPath()
-            }
-            return File(parent!!.path.toFile(), name!!).toPath()
-        }
+    override var path: Path?
+        get() = File(parent!!.path!!.toFile(), name!!).toPath()
+        set(value) {}
 
     override fun toString(): String {
         return "dir($name, dirs=$dir, files=$file)"

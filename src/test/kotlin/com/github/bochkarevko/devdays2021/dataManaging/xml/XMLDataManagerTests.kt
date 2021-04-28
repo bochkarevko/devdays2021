@@ -6,18 +6,20 @@ import java.io.File
 class XMLDataManagerTests {
     @Test
     fun test() {
+        val projPath = File("./src").toPath()
         val manager = XMLDataManager(
-            File("src/test/resources/public_config.xml" ).toPath(),
-            File("src/test/resources/private_config.xml" ).toPath(),
-            "petya229"
+            projPath,
+            File(projPath.toFile(), "test/resources/public_config.xml" ).toPath(),
+            File(projPath.toFile(), "test/resources/private_config.xml" ).toPath(),
+            "petya229",
         )
-        manager.getFileInfo(File("foo/bar.txt").toPath())
-        manager.getFileInfo(File("foo/bar.txt").toPath())
-        manager.getFileInfo(File("foo/bar2.txt").toPath())
-        manager.getFileInfo(File("foo/bar3.txt").toPath())
-        manager.getFileInfo(File("foo2/bar.txt").toPath())
-        manager.getFileInfo(File("foo3/bar.txt").toPath())
-        manager.getFileInfo(File("foo3/bar.txt").toPath())
+        manager.getFileInfo(File("src/foo/bar.txt").toPath())
+        manager.getFileInfo(File("src/foo/bar.txt").toPath())
+        manager.getFileInfo(File("src/foo/bar2.txt").toPath())
+        manager.getFileInfo(File("src/foo/bar3.txt").toPath())
+        manager.getFileInfo(File("src/foo2/bar.txt").toPath())
+        manager.getFileInfo(File("src/foo3/bar.txt").toPath())
+        manager.getFileInfo(File("src/foo3/bar.txt").toPath())
         manager.persist()
     }
 }
