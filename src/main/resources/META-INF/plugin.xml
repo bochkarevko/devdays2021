@@ -15,6 +15,8 @@
     <applicationListeners>
         <listener class="com.github.bochkarevko.devdays2021.listeners.MyProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
+        <listener class="com.github.bochkarevko.devdays2021.listeners.MyScrolledListener"
+                  topic="com.intellij.openapi.editor.event.VisibleAreaListener"/>
     </applicationListeners>
 
     <actions>
