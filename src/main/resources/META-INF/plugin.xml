@@ -27,5 +27,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <typedHandler implementation="com.github.bochkarevko.devdays2021.handlers.MyTypedHandler"/>
         <backspaceHandlerDelegate implementation="com.github.bochkarevko.devdays2021.handlers.MyBackSpaceHandler"/>
+        <moveLeftRightHandler implementationClass="com.github.bochkarevko.devdays2021.handlers.MyMoveElementLeftRightHandler"/>
     </extensions>
 </idea-plugin>
