@@ -1,7 +1,10 @@
 package com.github.bochkarevko.devdays2021.listeners.intellij
 
+import com.github.bochkarevko.devdays2021.MainClass
+import com.github.bochkarevko.devdays2021.utils.actionType
 import com.intellij.openapi.editor.event.EditorMouseEvent
 import com.intellij.openapi.editor.event.EditorMouseListener
+import com.intellij.openapi.fileEditor.FileDocumentManager
 
 class CtoEditorMouseListener : EditorMouseListener {
     override fun mouseClicked(event: EditorMouseEvent) {
@@ -16,7 +19,11 @@ class CtoEditorMouseListener : EditorMouseListener {
 
     override fun mousePressed(event: EditorMouseEvent) {
         super.mousePressed(event)
-        println("mousePressed ${event.editor.document}")
+        val a = FileDocumentManager.getInstance().getFile(event.editor.document)
+        println(a)
+        if (a != null) {
+            MainClass.sendAction(a.toNioPath(), actionType.CARET)
+        }
     }
 
     override fun mouseReleased(event: EditorMouseEvent) {

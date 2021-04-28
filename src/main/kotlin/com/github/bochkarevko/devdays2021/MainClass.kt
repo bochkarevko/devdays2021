@@ -12,15 +12,19 @@ class MainClass {
         private const val BOUND_MAX: Long = 120 * 1000
         var startTime: Long = 0
         var lastFile: Path? = null
-        val manager: XMLDataManager
+        val manager = XMLDataManager(
+            File("myOwnerFile.xml" ).toPath(),
+            File("ownerFile.xml" ).toPath(),
+            "TestOwner"
+        )
 
-        init {
-            val newFileOwners = File("ownerFile.xml")
-            newFileOwners.writeText("<root/>")
-            val newFileMy = File("myOwnerFile.xml")
-            newFileMy.writeText("<root/>")
-            manager = XMLDataManager(newFileOwners.toPath(), newFileMy.toPath(), "Test")
-        }
+//        init {
+//            val newFileOwners = File("ownerFile.xml")
+//            newFileOwners.writeText("<root/>")
+//            val newFileMy = File("myOwnerFile.xml")
+//            newFileMy.writeText("<root/>")
+//            manager = XMLDataManager(newFileOwners.toPath(), newFileMy.toPath(), "Test")
+//        }
 
         fun sendAction(@NotNull fileName: Path, type: actionType) {
             if (lastFile == null) {
@@ -30,6 +34,8 @@ class MainClass {
             if (lastFile != fileName) {
                 checkInputTime(fileName)
                 lastFile = fileName
+            } else{
+                checkInputTime(fileName)
             }
         }
 
@@ -44,10 +50,11 @@ class MainClass {
             }
             if (delta < BOUND_MAX) {
                 val fileInfo = manager.getFileInfo(fileName)
+                println(fileName + delta)
                 fileInfo.duration = fileInfo.duration.plusMillis(delta)
                 startTime = getTime()
             } else {
-                TODO()
+                lastFile = null
             }
         }
     }
