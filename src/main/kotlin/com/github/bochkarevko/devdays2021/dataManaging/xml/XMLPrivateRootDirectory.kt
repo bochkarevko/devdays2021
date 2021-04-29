@@ -5,9 +5,9 @@ import javax.xml.bind.annotation.*
 
 @XmlRootElement(name = "root")
 @XmlAccessorType(XmlAccessType.FIELD)
-open class XMLRootDirectory(
-    @XmlElement val dir: MutableList<XMLDirectory> = mutableListOf(),
-    @XmlElement val file: MutableList<XMLFile> = mutableListOf(),
+open class XMLPrivateRootDirectory(
+    @XmlElement val dir: MutableList<XMLPrivateDirectory> = mutableListOf(),
+    @XmlElement val file: MutableList<XMLPrivateFile> = mutableListOf(),
 ) {
     @XmlTransient open var path: Path? = null
 

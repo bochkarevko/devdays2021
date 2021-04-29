@@ -1,16 +1,30 @@
 package com.github.bochkarevko.devdays2021.dataManaging
 
 import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLDataManager
-import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLFile
+import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLPrivateFile
+import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLPublicFile
 import java.nio.file.Path
 import java.time.Duration
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+import kotlin.math.pow
 
 class FileInfo(
     val path: Path,
     private val manager: DataManager,
-    internal val publicXmlFile: XMLFile,
-    private var privateXmlFile: XMLFile?
+    internal val publicXmlFile: XMLPublicFile,
+    private var privateXmlFile: XMLPrivateFile?
 ) {
+    private val COEF = 0.995
+    private var canClaim: Boolean
+        get() = if (privateXmlFile == null) false else privateXmlFile!!.canClaim
+        set(value) {
+            if (privateXmlFile == null) {
+                throw Exception("You can't set canClaim, when you didn't set duration before")
+            }
+            privateXmlFile!!.canClaim = value
+        }
+
     var duration: Duration
         get() {
             if (privateXmlFile == null) {
@@ -29,16 +43,26 @@ class FileInfo(
         }
 
     fun isOwner(): Boolean {
-        return privateXmlFile != null && manager.defaultOwner == publicXmlFile.owner
+        return privateXmlFile != null && // check this just in case
+                manager.defaultOwner == publicXmlFile.owner
     }
 
     fun canOwn(): Boolean {
-        return duration > publicXmlFile.duration
+        return privateXmlFile != null && privateXmlFile!!.canClaim &&
+                decayDuration(publicXmlFile.duration,publicXmlFile.lastTouched) < duration
+    }
+
+    private fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
+        val chrono = ChronoUnit.DAYS
+        val daysPassed = chrono.between(time, ZonedDateTime.now())
+        return duration.multipliedBy(COEF.pow(daysPassed.toDouble()).toLong())
     }
 
     fun tryClaimingOwnership() {
         if (canOwn()) {
+            publicXmlFile.duration = duration
             publicXmlFile.owner = manager.defaultOwner
+            publicXmlFile.lastTouched = privateXmlFile!!.lastTouched
         }
     }
 }

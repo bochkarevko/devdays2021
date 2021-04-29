@@ -6,10 +6,11 @@ import java.io.File
 class XMLDataManagerTests {
     @Test
     fun test() {
+        val projPath = File("./src").toPath()
         val manager = XMLDataManager(
-            File("./src").toPath(),
-            File("src/test/resources/public_config.xml" ).toPath(),
-            File("src/test/resources/private_config.xml" ).toPath(),
+            projPath,
+            File(projPath.toFile(), "test/resources/public_config.xml" ).toPath(),
+            File(projPath.toFile(), "test/resources/private_config.xml" ).toPath(),
             "petya229",
         )
         manager.getFileInfo(File("src/foo/bar.txt").toPath())

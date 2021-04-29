@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <root>
     <dir name="foo">
-        <file name="bar.txt" owner="petya229" duration="PT0S"/>
-        <file name="bar2.txt" owner="petya229" duration="PT0S"/>
-        <file name="bar3.txt" owner="petya229" duration="PT0S"/>
+        <file name="bar.txt" canClaim="true" duration="PT0S" lastTouched="2021-04-29T13:59:45.851725+03:00[Europe/Moscow]"/>
+        <file name="bar2.txt" canClaim="true" duration="PT0S" lastTouched="2021-04-29T13:59:45.852529+03:00[Europe/Moscow]"/>
+        <file name="bar3.txt" canClaim="true" duration="PT0S" lastTouched="2021-04-29T13:59:45.852698+03:00[Europe/Moscow]"/>
     </dir>
     <dir name="foo2">
-        <file name="bar.txt" owner="petya229" duration="PT0S"/>
+        <file name="bar.txt" canClaim="true" duration="PT0S" lastTouched="2021-04-29T13:59:45.853011+03:00[Europe/Moscow]"/>
     </dir>
     <dir name="foo3">
-        <file name="bar.txt" owner="petya229" duration="PT0S"/>
+        <file name="bar.txt" canClaim="true" duration="PT0S" lastTouched="2021-04-29T13:59:45.853180+03:00[Europe/Moscow]"/>
     </dir>
 </root>
