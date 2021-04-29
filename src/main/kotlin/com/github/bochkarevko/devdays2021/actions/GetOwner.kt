@@ -16,7 +16,7 @@ class GetOwner : AnAction() {
                 Notification(
                     Notifications.SYSTEM_MESSAGES_GROUP_ID,
                     "File Owner",
-                    owner ?: "No owner",
+                    (owner ?: "No owner") + " owns file " + path.fileName,
                     NotificationType.INFORMATION,
                     null
                 )

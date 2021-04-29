@@ -6,11 +6,11 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.pow
 
 object Utils {
-    private const val COEF = 0.995
+    private const val perDayDecayCoefficient = 0.995
 
     fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
-        val chrono = ChronoUnit.DAYS
-        val daysPassed = chrono.between(time, ZonedDateTime.now())
-        return Duration.ofNanos(duration.toNanos() * COEF.pow(daysPassed.toDouble()).toLong())
+        val daysPassed = ChronoUnit.DAYS.between(time, ZonedDateTime.now())
+        val thisDecay = perDayDecayCoefficient.pow(daysPassed.toDouble())
+        return Duration.ofNanos((duration.toNanos() * thisDecay).toLong())
     }
 }
