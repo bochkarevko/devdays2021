@@ -5,31 +5,33 @@ import com.github.bochkarevko.devdays2021.utils.actionType
 import org.jetbrains.annotations.NotNull
 import java.io.File
 import java.nio.file.Path
+import java.time.Duration
 
 class MainClass {
     companion object {
-        private const val BOUND_MIN: Long = 2 * 1000
         private const val BOUND_MAX: Long = 9 * 1000
         var startTime: Long = 0
         var lastFile: Path? = null
+        var isHot : Boolean = false
         var myFile: File? = null
         var generalFile : File? = null
         var projectPath : Path? = null
             set(value){
+                val name = System.getProperty("user.name")
                 field = value
                 myFile = File(projectPath!!.toFile(), "myOwnerFile.xml" )
-                //if (!myFile!!.isFile){
-                myFile!!.writeText("<root/>")
-                //}
+                if (!myFile!!.isFile){
+                    myFile!!.writeText("<root/>")
+                }
                 generalFile = File(projectPath!!.toFile(), "ownerFile.xml" )
-                //if (!generalFile!!.isFile){
-                generalFile!!.writeText("<root/>")
-                //}
+                if (!generalFile!!.isFile){
+                    generalFile!!.writeText("<root/>")
+                }
                 manager = XMLDataManager(
                     projectPath!!,
                     generalFile!!.toPath(),
                     myFile!!.toPath(),
-                    "TestOwner"
+                    name
                 )
             }
         var manager : XMLDataManager? = null
@@ -38,16 +40,20 @@ class MainClass {
             if (lastFile == null) {
                 lastFile = fileName
                 startTime = getTime()
+            } else if (lastFile!! == myFile!!.toPath() || lastFile!! == generalFile!!.toPath()){
+                return
             }
-            when(type){
-                actionType.SWITCH_FILE -> {
-                    checkTime()
-                    saveData()
-                    persistChanges()
-                    lastFile = fileName
-                    startTime = getTime()
+            else {
+                when (type) {
+                    actionType.SWITCH_FILE -> {
+                        checkTime()
+                        saveData()
+                        persistChanges()
+                        lastFile = fileName
+                        startTime = getTime()
+                    }
+                    else -> checkTime()
                 }
-                else-> checkTime()
             }
         }
 
@@ -67,10 +73,11 @@ class MainClass {
         private fun saveData(){
             val delta = getTime() - startTime
             val fileInfo = manager!!.getFileInfo(lastFile!!)
-            fileInfo.duration = fileInfo.duration.plusMillis(delta)!!
+            val duration = Duration.ofMillis(delta)
+            fileInfo.addExtraDuration(duration)
         }
 
-        fun persistChanges(){
+        private fun persistChanges(){
             manager!!.persist()
         }
     }
