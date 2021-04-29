@@ -12,17 +12,23 @@ class MainClass {
         private const val BOUND_MAX: Long = 120 * 1000
         var startTime: Long = 0
         var lastFile: Path? = null
+        var myFile: File? = null
+        var generalFile : File? = null
         var projectPath : Path? = null
             set(value){
                 field = value
-                val my = File(projectPath!!.toFile(), "myOwnerFile.xml" )
-                my.writeText("<root/>")
-                val owner = File(projectPath!!.toFile(), "ownerFile.xml" )
-                owner.writeText("<root/>")
+                myFile = File(projectPath!!.toFile(), "myOwnerFile.xml" )
+                if (!myFile!!.isFile){
+                    myFile!!.writeText("<root/>")
+                }
+                generalFile = File(projectPath!!.toFile(), "ownerFile.xml" )
+                if (!generalFile!!.isFile){
+                    generalFile!!.writeText("<root/>")
+                }
                 manager = XMLDataManager(
                     projectPath!!,
-                    owner.toPath(),
-                    my.toPath(),
+                    generalFile!!.toPath(),
+                    myFile!!.toPath(),
                     "TestOwner"
                 )
             }
