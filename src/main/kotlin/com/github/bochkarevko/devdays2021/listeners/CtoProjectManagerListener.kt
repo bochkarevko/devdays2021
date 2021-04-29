@@ -1,10 +1,10 @@
 package com.github.bochkarevko.devdays2021.listeners
 
 import com.github.bochkarevko.devdays2021.MainClass
-import com.intellij.openapi.fileEditor.FileEditorManager
+import com.github.bochkarevko.devdays2021.listeners.intellij.CtoFileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManagerListener
-import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import java.io.File
 
 internal class CtoProjectManagerListener : ProjectManagerListener {
@@ -12,6 +12,8 @@ internal class CtoProjectManagerListener : ProjectManagerListener {
 
         MainClass.projectPath = File(project.basePath).toPath()
         println("project opened??")
+        project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, CtoFileEditorManagerListener())
+
     }
 
 
