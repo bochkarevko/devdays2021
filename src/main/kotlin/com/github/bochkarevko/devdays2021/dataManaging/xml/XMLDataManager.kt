@@ -11,27 +11,31 @@ import javax.xml.bind.Marshaller
 
 
 class XMLDataManager(
+    internal var projectPath: Path,
     private var publicDocumentPath: Path,
     private var privateDocumentPath: Path,
-    override val defaultOwner: String
+    override val defaultOwner: String,
 ) : DataManager {
     private val publicRootDirectory: XMLRootDirectory
     internal val privateRootDirectory: XMLRootDirectory
-    internal val projectPath = File(".").toPath().normalize().toAbsolutePath()
     private val jaxbContext = JAXBContext.newInstance(XMLRootDirectory::class.java)
     private val marshaller = jaxbContext.createMarshaller()
-    private val fileInfoMap = mutableMapOf<Path, FileInfo>() // if have PrivateFileInfo then PrivateFileInfo else PublicFileInfo
+    private val fileInfoMap =
+        mutableMapOf<Path, FileInfo>() // if have PrivateFileInfo then PrivateFileInfo else PublicFileInfo
 
     init {
         if (!publicDocumentPath.isFile() || !privateDocumentPath.isFile()) {
             throw IllegalArgumentException("documentPath should lead to some file")
         }
-        publicDocumentPath = publicDocumentPath.normalize()
-        privateDocumentPath = privateDocumentPath.normalize()
+        projectPath = projectPath.normalize().toAbsolutePath()
+        publicDocumentPath = publicDocumentPath.normalize().toAbsolutePath()
+        privateDocumentPath = privateDocumentPath.normalize().toAbsolutePath()
 
         val unmarshaller = jaxbContext.createUnmarshaller()
         publicRootDirectory = unmarshaller.unmarshal(publicDocumentPath.toFile()) as XMLRootDirectory
+        publicRootDirectory.path = projectPath
         privateRootDirectory = unmarshaller.unmarshal(privateDocumentPath.toFile()) as XMLRootDirectory
+        privateRootDirectory.path = projectPath
 
         // set parents
         setParents(privateRootDirectory)
@@ -56,7 +60,9 @@ class XMLDataManager(
             throw IllegalArgumentException("Is not a file")
         }
 //        if (!path.toAbsolutePath().startsWith(projectPath)) {
-//            throw IllegalArgumentException("File is not in our project directory")
+//            throw IllegalArgumentException(
+//                "File is not in our project directory, proj_path=$projectPath, file_path=${path.toAbsolutePath()}"
+//            )
 //        }
         return if (!fileInfoMap.containsKey(path)) {
             createFileInfo(path)
@@ -86,19 +92,9 @@ class XMLDataManager(
     }
 
     private fun setParents(dir: XMLRootDirectory) {
-        dir.file.forEach { f ->
-            if (dir !is XMLDirectory) {
-                f.parent = null
-            } else {
-                f.parent = dir
-            }
-        }
+        dir.file.forEach { f -> f.parent = dir }
         dir.dir.forEach { d ->
-            if (dir !is XMLDirectory) {
-                d.parent = null
-            } else {
-                d.parent = dir
-            }
+            d.parent = dir
             setParents(d)
         }
     }
@@ -157,5 +153,6 @@ class XMLDataManager(
 }
 
 internal fun Path.getSeparated(projectPath: Path): List<String> {
-    return projectPath.toAbsolutePath().relativize(this.toAbsolutePath()).iterator().asSequence().toList().map { p -> p.toFile().name }
+    return projectPath.toAbsolutePath().relativize(this.toAbsolutePath()).iterator().asSequence().toList()
+        .map { p -> p.toFile().name }
 }
