@@ -6,12 +6,12 @@ import javax.xml.bind.annotation.*
 
 @XmlRootElement(name = "dir")
 @XmlAccessorType(XmlAccessType.FIELD)
-class XMLDirectory(
+class XMLPublicDirectory(
     @XmlAttribute val name: String? = null,
-    @XmlTransient internal var parent: XMLRootDirectory? = null,
-    dirs: MutableList<XMLDirectory> = mutableListOf(),
-    files: MutableList<XMLFile> = mutableListOf(),
-) : XMLRootDirectory(dirs, files) {
+    @XmlTransient internal var parent: XMLPublicRootDirectory? = null,
+    dirs: MutableList<XMLPublicDirectory> = mutableListOf(),
+    files: MutableList<XMLPublicFile> = mutableListOf(),
+) : XMLPublicRootDirectory(dirs, files) {
     override var path: Path?
         get() = File(parent!!.path!!.toFile(), name!!).toPath()
         set(value) {}

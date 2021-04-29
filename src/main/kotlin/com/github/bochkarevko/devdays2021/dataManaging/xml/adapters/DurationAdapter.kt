@@ -1,4 +1,4 @@
-package com.github.bochkarevko.devdays2021.dataManaging.xml
+package com.github.bochkarevko.devdays2021.dataManaging.xml.adapters
 
 import java.time.Duration
 import javax.xml.bind.annotation.adapters.XmlAdapter

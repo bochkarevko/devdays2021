@@ -16,10 +16,12 @@ class XMLDataManager(
     private var privateDocumentPath: Path,
     override val defaultOwner: String,
 ) : DataManager {
-    private val publicRootDirectory: XMLRootDirectory
-    internal val privateRootDirectory: XMLRootDirectory
-    private val jaxbContext = JAXBContext.newInstance(XMLRootDirectory::class.java)
-    private val marshaller = jaxbContext.createMarshaller()
+    private val publicRootDirectory: XMLPublicRootDirectory
+    internal val privateRootDirectory: XMLPrivateRootDirectory
+    private val jaxbPublicContext = JAXBContext.newInstance(XMLPublicRootDirectory::class.java)
+    private val publicMarshaller = jaxbPublicContext.createMarshaller()
+    private val jaxbPrivateContext = JAXBContext.newInstance(XMLPrivateRootDirectory::class.java)
+    private val privateMarshaller = jaxbPrivateContext.createMarshaller()
     private val fileInfoMap =
         mutableMapOf<Path, FileInfo>() // if have PrivateFileInfo then PrivateFileInfo else PublicFileInfo
 
@@ -31,10 +33,11 @@ class XMLDataManager(
         publicDocumentPath = publicDocumentPath.normalize().toAbsolutePath()
         privateDocumentPath = privateDocumentPath.normalize().toAbsolutePath()
 
-        val unmarshaller = jaxbContext.createUnmarshaller()
-        publicRootDirectory = unmarshaller.unmarshal(publicDocumentPath.toFile()) as XMLRootDirectory
+        publicRootDirectory =
+            jaxbPublicContext.createUnmarshaller().unmarshal(publicDocumentPath.toFile()) as XMLPublicRootDirectory
         publicRootDirectory.path = projectPath
-        privateRootDirectory = unmarshaller.unmarshal(privateDocumentPath.toFile()) as XMLRootDirectory
+        privateRootDirectory =
+            jaxbPrivateContext.createUnmarshaller().unmarshal(privateDocumentPath.toFile()) as XMLPrivateRootDirectory
         privateRootDirectory.path = projectPath
 
         // set parents
@@ -45,12 +48,13 @@ class XMLDataManager(
         addAllPublicToMap(publicRootDirectory)
         addAllPrivateToMap(privateRootDirectory)
 
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        publicMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+        privateMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
         // output to test JAXB
         println("=====================")
-        marshaller.marshal(publicRootDirectory, System.out)
-        marshaller.marshal(privateRootDirectory, System.out)
+        publicMarshaller.marshal(publicRootDirectory, System.out)
+        privateMarshaller.marshal(privateRootDirectory, System.out)
         println("=====================")
     }
 
@@ -80,18 +84,18 @@ class XMLDataManager(
     }
 
     override fun persist() {
-        marshaller.marshal(publicRootDirectory, publicDocumentPath.toFile())
-        marshaller.marshal(privateRootDirectory, privateDocumentPath.toFile())
+        publicMarshaller.marshal(publicRootDirectory, publicDocumentPath.toFile())
+        privateMarshaller.marshal(privateRootDirectory, privateDocumentPath.toFile())
         println("=====================")
         println(publicRootDirectory)
         println(privateRootDirectory)
         println("=====================")
-        marshaller.marshal(publicRootDirectory, System.out)
-        marshaller.marshal(privateRootDirectory, System.out)
+        publicMarshaller.marshal(publicRootDirectory, System.out)
+        privateMarshaller.marshal(privateRootDirectory, System.out)
         println("=====================")
     }
 
-    private fun setParents(dir: XMLRootDirectory) {
+    private fun setParents(dir: XMLPublicRootDirectory) {
         dir.file.forEach { f -> f.parent = dir }
         dir.dir.forEach { d ->
             d.parent = dir
@@ -99,41 +103,49 @@ class XMLDataManager(
         }
     }
 
-    private fun addAllPublicToMap(dir: XMLRootDirectory) {
+    private fun setParents(dir: XMLPrivateRootDirectory) {
+        dir.file.forEach { f -> f.parent = dir }
+        dir.dir.forEach { d ->
+            d.parent = dir
+            setParents(d)
+        }
+    }
+
+    private fun addAllPublicToMap(dir: XMLPublicRootDirectory) {
         dir.file.forEach { f -> fileInfoMap[f.path] = toPublicFileInfo(f) }
         dir.dir.forEach { d ->
             addAllPublicToMap(d)
         }
     }
 
-    private fun addAllPrivateToMap(dir: XMLRootDirectory) {
+    private fun addAllPrivateToMap(dir: XMLPrivateRootDirectory) {
         dir.file.forEach { f -> fileInfoMap[f.path] = toPrivateFileInfo(f) }
         dir.dir.forEach { d -> addAllPrivateToMap(d) }
     }
 
-    private fun toPublicFileInfo(xmlFile: XMLFile): FileInfo {
+    private fun toPublicFileInfo(xmlFile: XMLPublicFile): FileInfo {
         if (xmlFile.name == null || xmlFile.owner == null) {
             throw Exception("Problem in code: File name or owner is null")
         }
         return FileInfo(xmlFile.path, this, xmlFile, null)
     }
 
-    private fun toPrivateFileInfo(xmlFile: XMLFile): FileInfo {
+    private fun toPrivateFileInfo(xmlFile: XMLPrivateFile): FileInfo {
         if (xmlFile.name == null) {
             throw Exception("Problem in code: File name is null")
         }
-        val publicFile = fileInfoMap[xmlFile.path]!!
-        return FileInfo(xmlFile.path, this, publicFile.publicXmlFile, xmlFile)
+        val publicFileInfo = fileInfoMap[xmlFile.path]!!
+        return FileInfo(xmlFile.path, this, publicFileInfo.publicXmlFile, xmlFile)
     }
 
-    internal fun touch(directory: XMLRootDirectory, path: Path): XMLFile {
+    internal fun touch(directory: XMLPublicRootDirectory, path: Path): XMLPublicFile {
         var currNode = directory
         val separated = path.getSeparated(projectPath)
         for (currDirName in separated.subList(0, separated.size - 1)) {
             val nextNode = currNode.dir.find { d -> d.name == currDirName }
             currNode = if (nextNode == null) {
-                val parent = if (currNode !is XMLDirectory) null else currNode
-                val newNode = XMLDirectory(currDirName, parent)
+                val parent = if (currNode !is XMLPublicDirectory) null else currNode
+                val newNode = XMLPublicDirectory(currDirName, parent)
                 currNode.dir.add(newNode)
                 newNode
             } else {
@@ -143,7 +155,32 @@ class XMLDataManager(
         val fileName = separated[separated.size - 1]
         val file = currNode.file.find { f -> f.name == fileName }
         return if (file == null) {
-            val newFileInfo = XMLFile(fileName, currNode, defaultOwner)
+            val newFileInfo = XMLPublicFile(fileName, currNode, defaultOwner)
+            currNode.file.add(newFileInfo)
+            newFileInfo
+        } else {
+            file
+        }
+    }
+
+    internal fun touch(directory: XMLPrivateRootDirectory, path: Path): XMLPrivateFile {
+        var currNode = directory
+        val separated = path.getSeparated(projectPath)
+        for (currDirName in separated.subList(0, separated.size - 1)) {
+            val nextNode = currNode.dir.find { d -> d.name == currDirName }
+            currNode = if (nextNode == null) {
+                val parent = if (currNode !is XMLPrivateDirectory) null else currNode
+                val newNode = XMLPrivateDirectory(currDirName, parent)
+                currNode.dir.add(newNode)
+                newNode
+            } else {
+                nextNode
+            }
+        }
+        val fileName = separated[separated.size - 1]
+        val file = currNode.file.find { f -> f.name == fileName }
+        return if (file == null) {
+            val newFileInfo = XMLPrivateFile(fileName, currNode)
             currNode.file.add(newFileInfo)
             newFileInfo
         } else {
