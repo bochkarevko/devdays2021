@@ -12,19 +12,21 @@ class MainClass {
         private const val BOUND_MAX: Long = 120 * 1000
         var startTime: Long = 0
         var lastFile: Path? = null
-        val manager = XMLDataManager(
-            File("myOwnerFile.xml" ).toPath(),
-            File("ownerFile.xml" ).toPath(),
-            "TestOwner"
-        )
-
-//        init {
-//            val newFileOwners = File("ownerFile.xml")
-//            newFileOwners.writeText("<root/>")
-//            val newFileMy = File("myOwnerFile.xml")
-//            newFileMy.writeText("<root/>")
-//            manager = XMLDataManager(newFileOwners.toPath(), newFileMy.toPath(), "Test")
-//        }
+        var projectPath : Path? = null
+            set(value){
+                field = value
+                val my = File(projectPath!!.toFile(), "myOwnerFile.xml" )
+                my.writeText("<root/>")
+                val owner = File(projectPath!!.toFile(), "ownerFile.xml" )
+                owner.writeText("<root/>")
+                manager = XMLDataManager(
+                    projectPath!!,
+                    owner.toPath(),
+                    my.toPath(),
+                    "TestOwner"
+                )
+            }
+        var manager : XMLDataManager? = null
 
         fun sendAction(@NotNull fileName: Path, type: actionType) {
             if (lastFile == null) {
@@ -49,9 +51,11 @@ class MainClass {
                 return
             }
             if (delta < BOUND_MAX) {
-                val fileInfo = manager.getFileInfo(fileName)
+                val fileInfo = manager?.getFileInfo(fileName)
                 println(fileName + delta)
-                fileInfo.duration = fileInfo.duration.plusMillis(delta)
+                //File("test.txt").writeText(fileName.toString() + delta.toString())
+                fileInfo!!.duration = fileInfo.duration.plusMillis(delta)!!
+                manager!!.persist()
                 startTime = getTime()
             } else {
                 lastFile = null

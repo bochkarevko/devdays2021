@@ -16,4 +16,9 @@ class CtoEditorFactoryListener : EditorFactoryListener {
         editor.addEditorMouseListener(CtoEditorMouseListener())
         editor.caretModel.addCaretListener(CtoCaretListener())
     }
+
+//    override fun editorReleased(event: EditorFactoryEvent) {
+//        super.editorReleased(event)
+//
+//    }
 }
