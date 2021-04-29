@@ -16,7 +16,7 @@ class FileInfo(
     private var privateXmlFile: XMLPrivateFile?
 ) {
     private val COEF = 0.995
-    private var canClaim: Boolean
+    var canClaim: Boolean
         get() = if (privateXmlFile == null) false else privateXmlFile!!.canClaim
         set(value) {
             if (privateXmlFile == null) {
@@ -25,22 +25,27 @@ class FileInfo(
             privateXmlFile!!.canClaim = value
         }
 
-    var duration: Duration
+    val duration: Duration
         get() {
             if (privateXmlFile == null) {
                 return Duration.ZERO
             }
             return privateXmlFile!!.duration
         }
-        set(value) {
-            if (privateXmlFile == null) {
-                privateXmlFile = (manager as XMLDataManager).touch(manager.privateRootDirectory, path)
-            }
-            privateXmlFile!!.duration = value
-            if (isOwner()) {
-                publicXmlFile.duration = value
-            }
+
+    fun addExtraDuration(extra: Duration) {
+        if (privateXmlFile == null) {
+            privateXmlFile = (manager as XMLDataManager).touch(manager.privateRootDirectory, path)
         }
+        val newDuration = decayDuration(duration, privateXmlFile!!.lastTouched).plus(extra)
+        val now = ZonedDateTime.now()
+        privateXmlFile!!.duration = newDuration
+        privateXmlFile!!.lastTouched = now
+        if (isOwner()) {
+            publicXmlFile.duration = newDuration
+            publicXmlFile.lastTouched = now
+        }
+    }
 
     fun isOwner(): Boolean {
         return privateXmlFile != null && // check this just in case
@@ -49,7 +54,8 @@ class FileInfo(
 
     fun canOwn(): Boolean {
         return privateXmlFile != null && privateXmlFile!!.canClaim &&
-                decayDuration(publicXmlFile.duration,publicXmlFile.lastTouched) < duration
+                decayDuration(publicXmlFile.duration,publicXmlFile.lastTouched) <
+                decayDuration(duration, privateXmlFile!!.lastTouched)
     }
 
     private fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
