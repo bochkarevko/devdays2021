@@ -11,6 +11,7 @@ class MainClass {
     companion object {
         private const val BOUND_MAX: Long = 9 * 1000
         var startTime: Long = 0
+        var currenttime : Long = 0
         var lastFile: Path? = null
         var isHot : Boolean = false
         var myFile: File? = null
@@ -40,9 +41,10 @@ class MainClass {
             if (lastFile == null) {
                 lastFile = fileName
                 startTime = getTime()
-            } else if (lastFile!! == myFile!!.toPath() || lastFile!! == generalFile!!.toPath()){
-                return
-            }
+                currenttime = startTime
+            } //else if (lastFile!! == myFile!!.toPath() || lastFile!! == generalFile!!.toPath()){
+                //return
+           // }
             else {
                 when (type) {
                     actionType.SWITCH_FILE -> {
@@ -51,8 +53,15 @@ class MainClass {
                         persistChanges()
                         lastFile = fileName
                         startTime = getTime()
+                        currenttime = startTime
                     }
-                    else -> checkTime()
+                    actionType.DOCUMENT_CHANGED -> {
+                        isHot = true
+                        checkTime()
+                    }
+                    else -> {
+                        checkTime()
+                    }
                 }
             }
         }
@@ -62,11 +71,12 @@ class MainClass {
         }
 
         private fun checkTime() {
-            val delta = getTime() - startTime
+            val delta = getTime() - currenttime
             if (delta < BOUND_MAX) {
-                return
+                currenttime = getTime()
             } else {
                 startTime = getTime()
+                currenttime = startTime
             }
         }
 
