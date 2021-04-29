@@ -10,16 +10,12 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class CtoFileEditorManagerListener : FileEditorManagerListener {
     override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-//        MainClass.sendAction(file.toNioPath(), actionType.OPEN_FILE)
-//        println("open" + file.toNioPath())
         super.fileOpened(source, file)
     }
 
     override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
         MainClass.sendAction(file.toNioPath(), actionType.CLOSE_FILE)
-        println("close")
         super.fileClosed(source, file)
-
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {

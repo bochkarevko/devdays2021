@@ -10,12 +10,21 @@ import java.time.Duration
 class MainClass {
     companion object {
         private const val BOUND_MAX: Long = 9 * 1000
+        private const val COLD_TIME_ALPHA = 0.5
+
         var startTime: Long = 0
-        var currenttime : Long = 0
-        var lastFile: Path? = null
+        var lastHotTime : Long = 0
+
+        private var currentDelta: Long = 0
+
+        private var lastFile: Path? = null
+
         var isHot : Boolean = false
+
         var myFile: File? = null
+
         var generalFile : File? = null
+
         var projectPath : Path? = null
             set(value){
                 val name = System.getProperty("user.name")
@@ -35,31 +44,29 @@ class MainClass {
                     name
                 )
             }
+
         var manager : XMLDataManager? = null
 
         fun sendAction(@NotNull fileName: Path, type: actionType) {
             if (lastFile == null) {
                 lastFile = fileName
                 startTime = getTime()
-                currenttime = startTime
-            } //else if (lastFile!! == myFile!!.toPath() || lastFile!! == generalFile!!.toPath()){
-                //return
-           // }
-            else {
+            } else {
                 when (type) {
                     actionType.SWITCH_FILE -> {
                         checkTime()
                         saveData()
-                        //persistChanges()
                         lastFile = fileName
                         startTime = getTime()
-                        currenttime = startTime
+                        currentDelta = 0
                     }
                     actionType.DOCUMENT_CHANGED -> {
                         isHot = true
+                        lastHotTime = getTime()
                         checkTime()
                     }
                     else -> {
+                        isHot = false
                         checkTime()
                     }
                 }
@@ -71,23 +78,28 @@ class MainClass {
         }
 
         private fun checkTime() {
-            val delta = getTime() - currenttime
+            val delta = getTime() - startTime
             if (delta < BOUND_MAX) {
-                currenttime = getTime()
-            } else {
-                startTime = getTime()
-                currenttime = startTime
+                currentDelta += if (isHot){
+                    delta
+                } else {
+                    if (getTime() - lastHotTime < BOUND_MAX){
+                        delta
+                    } else {
+                        (delta * COLD_TIME_ALPHA).toLong()
+                    }
+                }
             }
+            startTime = getTime()
         }
 
-        private fun saveData(){
-            val delta = getTime() - startTime
+        fun saveData(){
             val fileInfo = manager!!.getFileInfo(lastFile!!)
-            val duration = Duration.ofMillis(delta)
+            val duration = Duration.ofMillis(currentDelta)
             fileInfo.addExtraDuration(duration)
         }
 
-        private fun persistChanges(){
+        fun persistChanges(){
             manager!!.persist()
         }
     }

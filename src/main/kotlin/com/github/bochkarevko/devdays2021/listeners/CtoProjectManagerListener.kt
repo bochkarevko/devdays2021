@@ -19,6 +19,7 @@ internal class CtoProjectManagerListener : ProjectManagerListener {
 
     override fun projectClosed(project: Project) {
         super.projectClosed(project)
+        MainClass.saveData()
         MainClass.manager?.persist()
     }
 }

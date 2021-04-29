@@ -9,7 +9,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 class CtoCaretListener : CaretListener {
     override fun caretAdded(event: CaretEvent) {
         super.caretAdded(event)
-        println("caredAdded ${event.editor.document}")
     }
 
     override fun caretPositionChanged(event: CaretEvent) {
