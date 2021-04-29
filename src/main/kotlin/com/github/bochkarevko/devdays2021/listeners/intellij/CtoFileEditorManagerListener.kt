@@ -1,6 +1,6 @@
 package com.github.bochkarevko.devdays2021.listeners.intellij
 
-import ClaimDialog
+import com.github.bochkarevko.devdays2021.dialogs.ClaimDialog
 import com.github.bochkarevko.devdays2021.MainClass
 import com.github.bochkarevko.devdays2021.utils.actionType
 import com.intellij.openapi.fileEditor.FileEditorManager

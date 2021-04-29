@@ -50,7 +50,7 @@ class MainClass {
                     actionType.SWITCH_FILE -> {
                         checkTime()
                         saveData()
-                        persistChanges()
+                        //persistChanges()
                         lastFile = fileName
                         startTime = getTime()
                         currenttime = startTime

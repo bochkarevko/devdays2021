@@ -7,6 +7,21 @@
     <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
+    <actions>
+        <action id="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
+                class="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
+                text="Ready to claim this file"
+                description="If you've chosen to not claims this file and changed your mind">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
+                class="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
+                text="Update Ownership Time"
+                description="Save your time with files to xml">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.bochkarevko.devdays2021.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.bochkarevko.devdays2021.services.MyProjectService"/>

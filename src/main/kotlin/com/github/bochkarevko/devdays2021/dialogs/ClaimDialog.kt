@@ -1,3 +1,4 @@
+package com.github.bochkarevko.devdays2021.dialogs
 
 import com.github.bochkarevko.devdays2021.MainClass
 import java.awt.BorderLayout
@@ -17,7 +18,7 @@ import java.nio.file.Path
 
 class ClaimDialog(private val filepath: Path) : DialogWrapper(true) {
     @Nullable
-    override fun createCenterPanel(): JComponent? {
+    override fun createCenterPanel(): JComponent {
         val dialogPanel = JPanel(BorderLayout())
         val label = JLabel("You can claim the ownership of file ${filepath.fileName}. Do you want to do it?")
         label.preferredSize = Dimension(100, 100)
@@ -37,6 +38,6 @@ class ClaimDialog(private val filepath: Path) : DialogWrapper(true) {
 
     override fun doCancelAction() {
         super.doCancelAction()
-        // MainClass.manager?.getFileInfo(filepath)?.
+        MainClass.manager?.getFileInfo(filepath)?.canClaim = false
     }
 }
