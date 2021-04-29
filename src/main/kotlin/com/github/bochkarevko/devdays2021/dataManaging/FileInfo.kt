@@ -1,5 +1,6 @@
 package com.github.bochkarevko.devdays2021.dataManaging
 
+import com.github.bochkarevko.devdays2021.dataManaging.xml.Utils.decayDuration
 import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLDataManager
 import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLPrivateFile
 import com.github.bochkarevko.devdays2021.dataManaging.xml.XMLPublicFile
@@ -12,25 +13,23 @@ import kotlin.math.pow
 class FileInfo(
     val path: Path,
     private val manager: DataManager,
-    internal val publicXmlFile: XMLPublicFile,
-    private var privateXmlFile: XMLPrivateFile?
+    internal var publicXmlFile: XMLPublicFile? = null,
+    internal var privateXmlFile: XMLPrivateFile? = null
 ) {
-    private val COEF = 0.995
     var canClaim: Boolean
-        get() = if (privateXmlFile == null) false else privateXmlFile!!.canClaim
-        set(value) {
-            if (privateXmlFile == null) {
-                throw Exception("You can't set canClaim, when you didn't set duration before")
-            }
-            privateXmlFile!!.canClaim = value
+        get() = when (privateXmlFile) {
+            null -> false
+            else -> privateXmlFile!!.canClaim
+        }
+        set(value) = when (privateXmlFile) {
+            null -> throw Exception("You can't set canClaim, when you didn't set duration before")
+            else -> privateXmlFile!!.canClaim = value
         }
 
     val duration: Duration
-        get() {
-            if (privateXmlFile == null) {
-                return Duration.ZERO
-            }
-            return privateXmlFile!!.duration
+        get() = when (privateXmlFile) {
+            null -> Duration.ZERO
+            else -> privateXmlFile!!.duration
         }
 
     fun addExtraDuration(extra: Duration) {
@@ -42,33 +41,31 @@ class FileInfo(
         privateXmlFile!!.duration = newDuration
         privateXmlFile!!.lastTouched = now
         if (isOwner()) {
-            publicXmlFile.duration = newDuration
-            publicXmlFile.lastTouched = now
+            publicXmlFile!!.duration = newDuration
+            publicXmlFile!!.lastTouched = now
         }
     }
 
     fun isOwner(): Boolean {
-        return privateXmlFile != null && // check this just in case
-                manager.defaultOwner == publicXmlFile.owner
+        return privateXmlFile != null && publicXmlFile != null && // check this just in case
+                manager.defaultOwner == publicXmlFile!!.owner
     }
 
     fun canOwn(): Boolean {
         return privateXmlFile != null && privateXmlFile!!.canClaim &&
-                decayDuration(publicXmlFile.duration,publicXmlFile.lastTouched) <
-                decayDuration(duration, privateXmlFile!!.lastTouched)
-    }
-
-    internal fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
-        val chrono = ChronoUnit.DAYS
-        val daysPassed = chrono.between(time, ZonedDateTime.now())
-        return Duration.ofNanos(duration.toNanos() * COEF.pow(daysPassed.toDouble()).toLong())
+                (publicXmlFile == null ||
+                        decayDuration(publicXmlFile!!.duration, publicXmlFile!!.lastTouched) <
+                        decayDuration(duration, privateXmlFile!!.lastTouched))
     }
 
     fun tryClaimingOwnership() {
         if (canOwn()) {
-            publicXmlFile.duration = duration
-            publicXmlFile.owner = manager.defaultOwner
-            publicXmlFile.lastTouched = privateXmlFile!!.lastTouched
+            if (publicXmlFile == null) {
+                publicXmlFile = (manager as XMLDataManager).touch(manager.publicRootDirectory, path)
+            }
+            publicXmlFile!!.duration = duration
+            publicXmlFile!!.owner = manager.defaultOwner
+            publicXmlFile!!.lastTouched = privateXmlFile!!.lastTouched
         }
     }
 }

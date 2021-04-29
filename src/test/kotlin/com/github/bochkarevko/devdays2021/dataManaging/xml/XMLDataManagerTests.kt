@@ -9,6 +9,7 @@ import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.pow
+import kotlin.test.assertEquals
 
 class XMLDataManagerTests {
     val projPath: Path
@@ -41,11 +42,6 @@ class XMLDataManagerTests {
     fun testDecay() {
         val time = ZonedDateTime.now().minusMinutes(1)
         val duration = Duration.ofHours(1)
-        val chrono = ChronoUnit.DAYS
-        val daysPassed = chrono.between(time, ZonedDateTime.now())
-        println(duration)
-        println(daysPassed)
-        println(0.995.pow(daysPassed.toDouble()))
-        println(Duration.ofNanos(duration.toNanos() * 0.995.pow(daysPassed.toDouble()).toLong()))
+        assertEquals(duration, Utils.decayDuration(duration, time))
     }
 }

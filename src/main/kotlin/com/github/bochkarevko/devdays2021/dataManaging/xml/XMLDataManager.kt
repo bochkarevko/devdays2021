@@ -3,7 +3,6 @@ package com.github.bochkarevko.devdays2021.dataManaging.xml
 import com.github.bochkarevko.devdays2021.dataManaging.DataManager
 import com.github.bochkarevko.devdays2021.dataManaging.FileInfo
 import com.intellij.util.io.isFile
-import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.xml.bind.JAXBContext
@@ -16,7 +15,7 @@ class XMLDataManager(
     private var privateDocumentPath: Path,
     override val defaultOwner: String,
 ) : DataManager {
-    private val publicRootDirectory: XMLPublicRootDirectory
+    internal val publicRootDirectory: XMLPublicRootDirectory
     internal val privateRootDirectory: XMLPrivateRootDirectory
     private val jaxbPublicContext = JAXBContext.newInstance(XMLPublicRootDirectory::class.java)
     private val publicMarshaller = jaxbPublicContext.createMarshaller()
@@ -45,17 +44,17 @@ class XMLDataManager(
         setParents(publicRootDirectory)
 
         // merge them into fileInfoMap
-        addAllPublicToMap(publicRootDirectory)
-        addAllPrivateToMap(privateRootDirectory)
+        addAllToMap(publicRootDirectory)
+        addAllToMap(privateRootDirectory)
 
         publicMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
         privateMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
         // output to test JAXB
-        println("=====================")
-        publicMarshaller.marshal(publicRootDirectory, System.out)
-        privateMarshaller.marshal(privateRootDirectory, System.out)
-        println("=====================")
+//        println("=====================")
+//        publicMarshaller.marshal(publicRootDirectory, System.out)
+//        privateMarshaller.marshal(privateRootDirectory, System.out)
+//        println("=====================")
     }
 
     override fun getFileInfo(path: Path): FileInfo {
@@ -76,9 +75,9 @@ class XMLDataManager(
     }
 
     private fun createFileInfo(path: Path): FileInfo {
-        val publicFile = touch(publicRootDirectory, path)
-        val privateFile = touch(privateRootDirectory, path)
-        val file = FileInfo(path, this, publicFile, privateFile) // TODO: don't create new privateFile
+        val publicFile = getIfPresent(publicRootDirectory, path)
+        val privateFile = getIfPresent(privateRootDirectory, path)
+        val file = FileInfo(path, this, publicFile, privateFile)
         fileInfoMap[path] = file
         return file
     }
@@ -86,13 +85,13 @@ class XMLDataManager(
     override fun persist() {
         publicMarshaller.marshal(publicRootDirectory, publicDocumentPath.toFile())
         privateMarshaller.marshal(privateRootDirectory, privateDocumentPath.toFile())
-        println("=====================")
-        println(publicRootDirectory)
-        println(privateRootDirectory)
-        println("=====================")
-        publicMarshaller.marshal(publicRootDirectory, System.out)
-        privateMarshaller.marshal(privateRootDirectory, System.out)
-        println("=====================")
+//        println("=====================")
+        println("public=$publicRootDirectory")
+        println("private=$privateRootDirectory")
+//        println("=====================")
+//        publicMarshaller.marshal(publicRootDirectory, System.out)
+//        privateMarshaller.marshal(privateRootDirectory, System.out)
+//        println("=====================")
     }
 
     private fun setParents(dir: XMLPublicRootDirectory) {
@@ -111,31 +110,29 @@ class XMLDataManager(
         }
     }
 
-    private fun addAllPublicToMap(dir: XMLPublicRootDirectory) {
-        dir.file.forEach { f -> fileInfoMap[f.path] = toPublicFileInfo(f) }
-        dir.dir.forEach { d ->
-            addAllPublicToMap(d)
-        }
+    private fun addAllToMap(dir: XMLPublicRootDirectory) {
+        dir.file.forEach { f -> fileInfoMap[f.path] = toFileInfo(f) }
+        dir.dir.forEach { d -> addAllToMap(d) }
     }
 
-    private fun addAllPrivateToMap(dir: XMLPrivateRootDirectory) {
-        dir.file.forEach { f -> fileInfoMap[f.path] = toPrivateFileInfo(f) }
-        dir.dir.forEach { d -> addAllPrivateToMap(d) }
+    private fun addAllToMap(dir: XMLPrivateRootDirectory) {
+        dir.file.forEach { f -> fileInfoMap[f.path] = toFileInfo(f) }
+        dir.dir.forEach { d -> addAllToMap(d) }
     }
 
-    private fun toPublicFileInfo(xmlFile: XMLPublicFile): FileInfo {
+    private fun toFileInfo(xmlFile: XMLPublicFile): FileInfo {
         if (xmlFile.name == null || xmlFile.owner == null) {
             throw Exception("Problem in code: File name or owner is null")
         }
         return FileInfo(xmlFile.path, this, xmlFile, null)
     }
 
-    private fun toPrivateFileInfo(xmlFile: XMLPrivateFile): FileInfo {
+    private fun toFileInfo(xmlFile: XMLPrivateFile): FileInfo {
         if (xmlFile.name == null) {
             throw Exception("Problem in code: File name is null")
         }
-        val publicFileInfo = fileInfoMap[xmlFile.path]!!
-        return FileInfo(xmlFile.path, this, publicFileInfo.publicXmlFile, xmlFile)
+        val publicFileInfo = fileInfoMap[xmlFile.path]
+        return FileInfo(xmlFile.path, this, publicFileInfo?.publicXmlFile, xmlFile)
     }
 
     internal fun touch(directory: XMLPublicRootDirectory, path: Path): XMLPublicFile {
@@ -186,6 +183,28 @@ class XMLDataManager(
         } else {
             file
         }
+    }
+
+    internal fun getIfPresent(directory: XMLPublicRootDirectory, path: Path): XMLPublicFile? {
+        var currNode = directory
+        val separated = path.getSeparated(projectPath)
+        for (currDirName in separated.subList(0, separated.size - 1)) {
+            val nextNode = currNode.dir.find { d -> d.name == currDirName } ?: return null
+            currNode = nextNode
+        }
+        val fileName = separated[separated.size - 1]
+        return currNode.file.find { f -> f.name == fileName }
+    }
+
+    internal fun getIfPresent(directory: XMLPrivateRootDirectory, path: Path): XMLPrivateFile? {
+        var currNode = directory
+        val separated = path.getSeparated(projectPath)
+        for (currDirName in separated.subList(0, separated.size - 1)) {
+            val nextNode = currNode.dir.find { d -> d.name == currDirName } ?: return null
+            currNode = nextNode
+        }
+        val fileName = separated[separated.size - 1]
+        return currNode.file.find { f -> f.name == fileName }
     }
 }
 

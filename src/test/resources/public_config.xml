@@ -5,10 +5,4 @@
         <file name="bar2.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.459990+03:00[Europe/Moscow]"/>
         <file name="bar3.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.460131+03:00[Europe/Moscow]"/>
     </dir>
-    <dir name="foo2">
-        <file name="bar.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.460374+03:00[Europe/Moscow]"/>
-    </dir>
-    <dir name="foo3">
-        <file name="bar.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.460593+03:00[Europe/Moscow]"/>
-    </dir>
 </root>
