@@ -42,7 +42,6 @@ class XMLDataManagerTests {
     fun testDecay() {
         val time = ZonedDateTime.now().minusMinutes(1)
         val duration = Duration.ofHours(1)
-        val fileInfo = manager.getFileInfo(File("src/foo/bar.txt").toPath())
-        assertEquals(duration, fileInfo.decayDuration(duration, time))
+        assertEquals(duration, Utils.decayDuration(duration, time))
     }
 }
