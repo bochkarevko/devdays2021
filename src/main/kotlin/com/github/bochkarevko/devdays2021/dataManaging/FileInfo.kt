@@ -51,6 +51,10 @@ class FileInfo(
                 manager.defaultOwner == publicXmlFile!!.owner
     }
 
+    fun getPublicOwner(): String? {
+        return publicXmlFile?.owner
+    }
+
     fun canOwn(): Boolean {
         return privateXmlFile != null && privateXmlFile!!.canClaim &&
                 (publicXmlFile == null ||
