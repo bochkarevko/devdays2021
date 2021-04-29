@@ -102,5 +102,26 @@ class MainClass {
         fun persistChanges(){
             manager!!.persist()
         }
+
+        fun forTest(@NotNull fileName: Path, type: actionType) : String{
+            lastFile = fileName
+            when (type) {
+                actionType.SWITCH_FILE -> {
+                    checkTime()
+                    startTime = getTime()
+                    currentDelta = 0
+                }
+                actionType.DOCUMENT_CHANGED -> {
+                    isHot = true
+                    lastHotTime = getTime()
+                    checkTime()
+                }
+                else -> {
+                    isHot = false
+                    checkTime()
+                }
+            }
+            return lastFile.toString()+ " " + ((currentDelta/1000).toLong()).toString()
+        }
     }
 }
