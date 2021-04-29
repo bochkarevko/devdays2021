@@ -8,7 +8,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import java.awt.Rectangle
 
 class CtoVisibleAreaListener : VisibleAreaListener {
-    private fun scrolled(old: Rectangle?, new: Rectangle?) = (old != null && new != null && old.location != new.location)
+    private fun scrolled(old: Rectangle?, new: Rectangle?) =
+        (old != null && new != null && old.location != new.location)
 
     override fun visibleAreaChanged(e: VisibleAreaEvent) {
         if (scrolled(e.oldRectangle, e.newRectangle)) {

@@ -7,23 +7,11 @@ import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 
 class CtoEditorMouseListener : EditorMouseListener {
-    override fun mouseClicked(event: EditorMouseEvent) {
-        super.mouseClicked(event)
-    }
-
-    override fun mouseEntered(event: EditorMouseEvent) {
-        super.mouseEntered(event)
-    }
-
     override fun mousePressed(event: EditorMouseEvent) {
         super.mousePressed(event)
         val a = FileDocumentManager.getInstance().getFile(event.editor.document)
         if (a != null) {
             MainClass.sendAction(a.toNioPath(), actionType.CARET)
         }
-    }
-
-    override fun mouseReleased(event: EditorMouseEvent) {
-        super.mouseReleased(event)
     }
 }

@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.event.EditorFactoryListener
 class CtoEditorFactoryListener : EditorFactoryListener {
     override fun editorCreated(event: EditorFactoryEvent) {
         super.editorCreated(event)
-        println("Editor created, adding listeners")
         val editor = event.editor
         editor.scrollingModel.addVisibleAreaListener(CtoVisibleAreaListener())
         editor.document.addDocumentListener(CtoDocumentListener())
@@ -15,6 +14,5 @@ class CtoEditorFactoryListener : EditorFactoryListener {
         editor.addEditorMouseMotionListener(CtoEditorMouseMotionListener())
         editor.addEditorMouseListener(CtoEditorMouseListener())
         editor.caretModel.addCaretListener(CtoCaretListener())
-
     }
 }

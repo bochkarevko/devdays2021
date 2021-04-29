@@ -7,10 +7,6 @@ import com.intellij.openapi.editor.event.CaretListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 
 class CtoCaretListener : CaretListener {
-    override fun caretAdded(event: CaretEvent) {
-        super.caretAdded(event)
-    }
-
     override fun caretPositionChanged(event: CaretEvent) {
         super.caretPositionChanged(event)
         val a = FileDocumentManager.getInstance().getFile(event.editor.document)

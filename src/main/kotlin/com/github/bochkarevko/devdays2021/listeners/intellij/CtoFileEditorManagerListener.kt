@@ -9,10 +9,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.vfs.VirtualFile
 
 class CtoFileEditorManagerListener : FileEditorManagerListener {
-    override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
-        super.fileOpened(source, file)
-    }
-
     override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
         MainClass.sendAction(file.toNioPath(), actionType.CLOSE_FILE)
         super.fileClosed(source, file)

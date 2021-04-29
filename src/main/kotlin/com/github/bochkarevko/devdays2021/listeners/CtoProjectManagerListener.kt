@@ -9,13 +9,11 @@ import java.io.File
 
 internal class CtoProjectManagerListener : ProjectManagerListener {
     override fun projectOpened(project: Project) {
-
         MainClass.projectPath = File(project.basePath).toPath()
-        println("project opened??")
-        project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, CtoFileEditorManagerListener())
+        project.messageBus.connect()
+            .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, CtoFileEditorManagerListener())
 
     }
-
 
     override fun projectClosed(project: Project) {
         super.projectClosed(project)
