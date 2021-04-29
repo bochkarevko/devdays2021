@@ -52,10 +52,10 @@ class XMLDataManager(
         privateMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
         // output to test JAXB
-        println("=====================")
-        publicMarshaller.marshal(publicRootDirectory, System.out)
-        privateMarshaller.marshal(privateRootDirectory, System.out)
-        println("=====================")
+//        println("=====================")
+//        publicMarshaller.marshal(publicRootDirectory, System.out)
+//        privateMarshaller.marshal(privateRootDirectory, System.out)
+//        println("=====================")
     }
 
     override fun getFileInfo(path: Path): FileInfo {
@@ -86,13 +86,13 @@ class XMLDataManager(
     override fun persist() {
         publicMarshaller.marshal(publicRootDirectory, publicDocumentPath.toFile())
         privateMarshaller.marshal(privateRootDirectory, privateDocumentPath.toFile())
-        println("=====================")
-        println(publicRootDirectory)
-        println(privateRootDirectory)
-        println("=====================")
-        publicMarshaller.marshal(publicRootDirectory, System.out)
-        privateMarshaller.marshal(privateRootDirectory, System.out)
-        println("=====================")
+//        println("=====================")
+        println("public=$publicRootDirectory")
+        println("private=$privateRootDirectory")
+//        println("=====================")
+//        publicMarshaller.marshal(publicRootDirectory, System.out)
+//        privateMarshaller.marshal(privateRootDirectory, System.out)
+//        println("=====================")
     }
 
     private fun setParents(dir: XMLPublicRootDirectory) {

@@ -54,7 +54,7 @@ class FileInfo(
 
     fun canOwn(): Boolean {
         return privateXmlFile != null && privateXmlFile!!.canClaim &&
-                decayDuration(publicXmlFile.duration,publicXmlFile.lastTouched) <
+                decayDuration(publicXmlFile.duration, publicXmlFile.lastTouched) <
                 decayDuration(duration, privateXmlFile!!.lastTouched)
     }
 
