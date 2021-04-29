@@ -2,15 +2,10 @@ package com.github.bochkarevko.devdays2021.dialogs
 
 import com.github.bochkarevko.devdays2021.MainClass
 import java.awt.BorderLayout
-
 import java.awt.Dimension
-
 import javax.swing.JLabel
-
 import javax.swing.JPanel
-
 import javax.swing.JComponent
-
 import com.intellij.openapi.ui.DialogWrapper
 import org.jetbrains.annotations.Nullable
 import java.nio.file.Path

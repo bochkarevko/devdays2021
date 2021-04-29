@@ -10,15 +10,24 @@
     <actions>
         <action id="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
                 class="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
-                text="Ready to claim this file"
+                text="Ready to Claim This File"
                 description="If you've chosen to not claims this file and changed your mind">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
         </action>
         <action id="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
                 class="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
                 text="Update Ownership Time"
                 description="Save your time with files to xml">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+        </action>
+        <action id="com.github.bochkarevko.devdays2021.actions.GetOwner"
+                class="com.github.bochkarevko.devdays2021.actions.GetOwner"
+                text="Get Owner"
+                description="Get current file owner">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
         </action>
     </actions>
 
