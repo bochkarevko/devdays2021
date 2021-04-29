@@ -58,10 +58,10 @@ class FileInfo(
                 decayDuration(duration, privateXmlFile!!.lastTouched)
     }
 
-    private fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
+    internal fun decayDuration(duration: Duration, time: ZonedDateTime): Duration {
         val chrono = ChronoUnit.DAYS
         val daysPassed = chrono.between(time, ZonedDateTime.now())
-        return duration.multipliedBy(COEF.pow(daysPassed.toDouble()).toLong())
+        return Duration.ofNanos(duration.toNanos() * COEF.pow(daysPassed.toDouble()).toLong())
     }
 
     fun tryClaimingOwnership() {
