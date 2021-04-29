@@ -10,7 +10,7 @@ class CtoDocumentListener : DocumentListener {
     override fun documentChanged(event: DocumentEvent) {
         val a = FileDocumentManager.getInstance().getFile(event.document)
         if (a != null) {
-            MainClass.sendAction(a.toNioPath(), actionType.CARET)
+            MainClass.sendAction(a.toNioPath(), actionType.DOCUMENT_CHANGED)
         }
         super.documentChanged(event)
     }

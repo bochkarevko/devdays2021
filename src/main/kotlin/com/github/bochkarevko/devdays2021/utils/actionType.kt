@@ -5,4 +5,8 @@ enum class actionType {
     SELECTION,
     VISIBLE_AREA,
     CARET,
+    MOUSE_DRAGGED,
+    OPEN_FILE,
+    CLOSE_FILE,
+    SWITCH_FILE
 }
