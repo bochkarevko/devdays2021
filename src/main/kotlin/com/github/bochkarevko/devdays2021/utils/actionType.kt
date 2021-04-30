@@ -8,5 +8,6 @@ enum class actionType {
     MOUSE_DRAGGED,
     OPEN_FILE,
     CLOSE_FILE,
-    SWITCH_FILE
+    SWITCH_FILE,
+    RENAME_FILE,
 }

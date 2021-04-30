@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 @XmlAccessorType(XmlAccessType.FIELD)
 // TODO: there should be different XMLFiles for public and private xml files
 class XMLPublicFile(
-    @XmlAttribute val name: String? = null,
+    @XmlAttribute var name: String? = null,
     @XmlTransient internal var parent: XMLPublicRootDirectory? = null,
     @XmlAttribute var owner: String? = null,
     @XmlAttribute @field:XmlJavaTypeAdapter(

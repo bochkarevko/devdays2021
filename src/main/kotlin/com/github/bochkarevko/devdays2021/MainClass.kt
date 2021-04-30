@@ -47,7 +47,7 @@ class MainClass {
 
         var manager : XMLDataManager? = null
 
-        fun sendAction(@NotNull fileName: Path, type: actionType) {
+        fun sendAction(@NotNull fileName: Path, type: actionType, newValue: Any? = null) {
             if (lastFile == null) {
                 lastFile = fileName
                 startTime = getTime()
@@ -59,6 +59,13 @@ class MainClass {
                         lastFile = fileName
                         startTime = getTime()
                         currentDelta = 0
+                    }
+                    actionType.RENAME_FILE -> {
+                        isHot = true // TODO: ??
+                        val fileInfo = manager!!.getFileInfo(fileName)
+                        fileInfo.path = newValue as Path
+                        lastHotTime = getTime()
+                        checkTime()
                     }
                     actionType.DOCUMENT_CHANGED -> {
                         isHot = true

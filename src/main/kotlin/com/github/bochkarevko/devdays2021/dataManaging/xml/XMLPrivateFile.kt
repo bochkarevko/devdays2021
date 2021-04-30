@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 @XmlRootElement(name="file")
 @XmlAccessorType(XmlAccessType.FIELD)
 class XMLPrivateFile(
-    @XmlAttribute val name: String? = null,
+    @XmlAttribute var name: String? = null,
     @XmlTransient internal var parent: XMLPrivateRootDirectory? = null,
     @XmlAttribute var canClaim: Boolean = true,
     @XmlAttribute @field:XmlJavaTypeAdapter(

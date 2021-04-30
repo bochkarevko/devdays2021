@@ -21,7 +21,7 @@ class XMLDataManager(
     private val publicMarshaller = jaxbPublicContext.createMarshaller()
     private val jaxbPrivateContext = JAXBContext.newInstance(XMLPrivateRootDirectory::class.java)
     private val privateMarshaller = jaxbPrivateContext.createMarshaller()
-    private val fileInfoMap =
+    internal val fileInfoMap =
         mutableMapOf<Path, FileInfo>() // if have PrivateFileInfo then PrivateFileInfo else PublicFileInfo
 
     init {
@@ -58,11 +58,11 @@ class XMLDataManager(
     }
 
     override fun getFileInfo(path: Path): FileInfo {
-        val path = path.normalize()
+        val path = path.normalize().toAbsolutePath()
         if (Files.exists(path) && !path.isFile()) {
             throw IllegalArgumentException("Is not a file")
         }
-        if (!path.toAbsolutePath().startsWith(projectPath)) {
+        if (!path.startsWith(projectPath)) {
             throw IllegalArgumentException(
                 "File is not in our project directory, proj_path=$projectPath, file_path=${path.toAbsolutePath()}"
             )
@@ -136,9 +136,38 @@ class XMLDataManager(
     }
 
     internal fun touch(directory: XMLPublicRootDirectory, path: Path): XMLPublicFile {
+        val path = path.normalize().toAbsolutePath()
+        val parentNode = touchDir(directory, path.parent)
+        val fileName = path.fileName.toFile().name
+        val file = parentNode.file.find { f -> f.name == fileName }
+        return if (file == null) {
+            val newFileInfo = XMLPublicFile(fileName, parentNode)
+            parentNode.file.add(newFileInfo)
+            newFileInfo
+        } else {
+            file
+        }
+    }
+
+    internal fun touch(directory: XMLPrivateRootDirectory, path: Path): XMLPrivateFile {
+        val path = path.normalize().toAbsolutePath()
+        val parentNode = touchDir(directory, path.parent)
+        val fileName = path.fileName.toFile().name
+        val file = parentNode.file.find { f -> f.name == fileName }
+        return if (file == null) {
+            val newFileInfo = XMLPrivateFile(fileName, parentNode)
+            parentNode.file.add(newFileInfo)
+            newFileInfo
+        } else {
+            file
+        }
+    }
+
+    internal fun touchDir(directory: XMLPublicRootDirectory, path: Path): XMLPublicRootDirectory {
+        val path = path.normalize().toAbsolutePath()
         var currNode = directory
         val separated = path.getSeparated(projectPath)
-        for (currDirName in separated.subList(0, separated.size - 1)) {
+        for (currDirName in separated) {
             val nextNode = currNode.dir.find { d -> d.name == currDirName }
             currNode = if (nextNode == null) {
                 val parent = if (currNode !is XMLPublicDirectory) null else currNode
@@ -149,21 +178,14 @@ class XMLDataManager(
                 nextNode
             }
         }
-        val fileName = separated[separated.size - 1]
-        val file = currNode.file.find { f -> f.name == fileName }
-        return if (file == null) {
-            val newFileInfo = XMLPublicFile(fileName, currNode, defaultOwner)
-            currNode.file.add(newFileInfo)
-            newFileInfo
-        } else {
-            file
-        }
+        return currNode
     }
 
-    internal fun touch(directory: XMLPrivateRootDirectory, path: Path): XMLPrivateFile {
+    internal fun touchDir(directory: XMLPrivateRootDirectory, path: Path): XMLPrivateRootDirectory {
+        val path = path.normalize().toAbsolutePath()
         var currNode = directory
         val separated = path.getSeparated(projectPath)
-        for (currDirName in separated.subList(0, separated.size - 1)) {
+        for (currDirName in separated) {
             val nextNode = currNode.dir.find { d -> d.name == currDirName }
             currNode = if (nextNode == null) {
                 val parent = if (currNode !is XMLPrivateDirectory) null else currNode
@@ -174,15 +196,7 @@ class XMLDataManager(
                 nextNode
             }
         }
-        val fileName = separated[separated.size - 1]
-        val file = currNode.file.find { f -> f.name == fileName }
-        return if (file == null) {
-            val newFileInfo = XMLPrivateFile(fileName, currNode)
-            currNode.file.add(newFileInfo)
-            newFileInfo
-        } else {
-            file
-        }
+        return currNode
     }
 
     internal fun getIfPresent(directory: XMLPublicRootDirectory, path: Path): XMLPublicFile? {

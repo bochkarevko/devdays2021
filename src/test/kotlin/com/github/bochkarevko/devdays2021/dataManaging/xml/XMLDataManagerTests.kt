@@ -44,4 +44,20 @@ class XMLDataManagerTests {
         val duration = Duration.ofHours(1)
         assertEquals(duration, Utils.decayDuration(duration, time))
     }
+
+    @Test
+    fun testSetPath() {
+        val fileInfo = manager.getFileInfo(File("src/foo/bar.txt").toPath())
+        val oldPath = fileInfo.path
+        val newPath = oldPath.parent.resolve("buz").resolve(oldPath.fileName)
+        fileInfo.path = newPath
+        assertEquals(null, manager.fileInfoMap[oldPath])
+        assertEquals(fileInfo, manager.fileInfoMap[newPath])
+        if (fileInfo.privateXmlFile != null) {
+            assertEquals(newPath, fileInfo.privateXmlFile!!.path)
+        }
+        if (fileInfo.publicXmlFile != null) {
+            assertEquals(newPath, fileInfo.publicXmlFile!!.path)
+        }
+    }
 }
