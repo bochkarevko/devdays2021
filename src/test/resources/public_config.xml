@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<root>
+    <dir name="foo">
+        <file name="bar.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.458447+03:00[Europe/Moscow]"/>
+        <file name="bar2.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.459990+03:00[Europe/Moscow]"/>
+        <file name="bar3.txt" owner="petya229" duration="PT0S" lastTouched="2021-04-29T14:15:49.460131+03:00[Europe/Moscow]"/>
+    </dir>
+</root>

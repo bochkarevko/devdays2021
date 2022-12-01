@@ -7,13 +7,41 @@
     <!-- https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
+    <actions>
+        <action id="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
+                class="com.github.bochkarevko.devdays2021.actions.ReadyToClaimAction"
+                text="Ready to Claim This File" icon="/icons/icon.svg"
+                description="If you've chosen to not claims this file and changed your mind">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+        </action>
+        <action id="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
+                class="com.github.bochkarevko.devdays2021.actions.UpdateOwnershipTime"
+                text="Update Ownership Time" icon="/icons/icon.svg"
+                description="Save your time with files to xml">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+        </action>
+        <action id="com.github.bochkarevko.devdays2021.actions.GetOwner"
+                class="com.github.bochkarevko.devdays2021.actions.GetOwner"
+                text="Get Owner" icon="/icons/icon.svg"
+                description="Get current file owner">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" anchor="last"/>
+        </action>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.bochkarevko.devdays2021.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.bochkarevko.devdays2021.services.MyProjectService"/>
     </extensions>
 
     <applicationListeners>
-        <listener class="com.github.bochkarevko.devdays2021.listeners.MyProjectManagerListener"
+        <listener class="com.github.bochkarevko.devdays2021.listeners.CtoProjectManagerListener"
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <editorFactoryListener implementation="com.github.bochkarevko.devdays2021.listeners.CtoEditorFactoryListener"/>
+    </extensions>
 </idea-plugin>
